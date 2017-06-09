@@ -33,6 +33,11 @@ func callback(w http.ResponseWriter, req *http.Request) {
     fmt.Println(decoded)
     hash := hmac.New(sha256.New, []byte("6db72166ed2b37fbfd0a4a00f7bd01ac"))
     hash.Write(body)
+    if (hmac.Equal(decoded, hash.Sum(nil))) {
+      fmt.Println("Equal")
+    } else {
+      fmt.Println("Not Equal")
+    }
 }
 
 func main() {
