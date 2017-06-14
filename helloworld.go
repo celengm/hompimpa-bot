@@ -58,8 +58,8 @@ func callback(w http.ResponseWriter, req *http.Request) {
           if strings.Contains(message.Text, "hompimpa") {
             template := linebot.NewConfirmTemplate(
 			                          "Mau pilih apa?",
-			                          linebot.NewMessageTemplateAction("Yes", "Putih"),
-			                          linebot.NewMessageTemplateAction("No", "Hitam"),
+			                          linebot.NewMessageTemplateAction("Putih", "Putih"),
+			                          linebot.NewMessageTemplateAction("Hitam", "Hitam"),
 		                            )
 		        if _, err := bot.ReplyMessage(
 			                          event.ReplyToken,
