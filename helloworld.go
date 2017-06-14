@@ -6,6 +6,7 @@ import (
     "fmt"
     "os"
     "log"
+    "strings"
     "github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -31,12 +32,25 @@ func callback(w http.ResponseWriter, req *http.Request) {
     return
   }
   for _, event := range events {
-    if event.Type == linebot.EventTypeMessage {
+    switch event_type := event.Type; event_type {
+    case linebot.EventTypeJoin:
+      if event.Source.Type == linebot.EventSourceTypeGroup {
+        if _, err = bot.PushMessage(event.Source.GroupID, linebot.NewTextMessage("Halo, sapa aku dong dengan kirim \"Hai, @bot\"")).Do(); err != nil {
+          log.Print(err)
+        }
+      } else if event.Source.Type == linebot.EventSourceTypeRoom {
+        if _, err = bot.PushMessage(event.Source.RoomID, linebot.NewTextMessage("Halo, sapa aku dong dengan kirim \"Hai, @bot\"")).Do(); err != nil {
+          log.Print(err)
+        }
+      }
+    case linebot.EventTypeMessage:
       switch message := event.Message.(type) {
       case *linebot.TextMessage:
-        fmt.Println(message.Text)
-        if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
-          log.Print(err)
+        if strings.Contains(message.Text, "@bot") {
+          fmt.Println(message.Text)
+          if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
+            log.Print(err)
+          }
         }
       }
     }
