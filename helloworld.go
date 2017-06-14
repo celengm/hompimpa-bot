@@ -45,6 +45,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
         }
       }
     case linebot.EventTypeMessage:
+      fmt.Println("This is " + linebot.EventTypeMessage + " event")
       switch message := event.Message.(type) {
       case *linebot.TextMessage:
         if strings.Contains(message.Text, "@bot") {
