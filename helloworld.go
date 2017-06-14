@@ -2,14 +2,11 @@ package main
 
 import (
     "io"
-    "io/ioutil"
     "net/http"
     "fmt"
     "os"
     "log"
-    "encoding/base64"
-    "crypto/hmac"
-    "crypto/sha256"
+    "github.com/line/line-bot-sdk-go/linebot"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
@@ -20,24 +17,30 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func callback(w http.ResponseWriter, req *http.Request) {
-    defer req.Body.Close()
-    body, err := ioutil.ReadAll(req.Body)
-    if err != nil {
-      fmt.Println(err)
-    }
-    fmt.Println(body)
-    decoded, err := base64.StdEncoding.DecodeString(req.Header.Get("X-Line-Signature"))
-    if err != nil {
-      fmt.Println(err)
-    }
-    fmt.Println(decoded)
-    hash := hmac.New(sha256.New, []byte("6db72166ed2b37fbfd0a4a00f7bd01ac"))
-    hash.Write(body)
-    if (hmac.Equal(decoded, hash.Sum(nil))) {
-      fmt.Println("Equal")
+  bot, err := linebot.New(
+		"6db72166ed2b37fbfd0a4a00f7bd01ac",
+		"HeJ3LGMwxYtnGWdvtbG2pliVYpHxKSFyhJ5aoFOLORxhuMDqffoMGNhhlurDMepGX0IVHuM2sO67jtoK693UbdhrxroaNW/8ar74gB0aK5lZy4/P5kQ1vMHYWKNLWcluR/6XdNIo6QRM8n2jfwMOVwdB04t89/1O/w1cDnyilFU=",
+	)
+  events, err := bot.ParseRequest(req)
+  if err != nil {
+    if err == linebot.ErrInvalidSignature {
+      w.WriteHeader(400)
     } else {
-      fmt.Println("Not Equal")
+      w.WriteHeader(500)
     }
+    return
+  }
+  for _, event := range events {
+    if event.Type == linebot.EventTypeMessage {
+      switch message := event.Message.(type) {
+      case *linebot.TextMessage:
+        fmt.Println(message.Text)
+        if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
+          log.Print(err)
+        }
+      }
+    }
+  }
 }
 
 func main() {
