@@ -18,8 +18,8 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 func callback(w http.ResponseWriter, req *http.Request) {
   bot, err := linebot.New(
-		"6db72166ed2b37fbfd0a4a00f7bd01ac",
-		"HeJ3LGMwxYtnGWdvtbG2pliVYpHxKSFyhJ5aoFOLORxhuMDqffoMGNhhlurDMepGX0IVHuM2sO67jtoK693UbdhrxroaNW/8ar74gB0aK5lZy4/P5kQ1vMHYWKNLWcluR/6XdNIo6QRM8n2jfwMOVwdB04t89/1O/w1cDnyilFU=",
+		os.Getenv("CHANNEL_SECRET"),
+		os.Getenv("CHANNEL_ACCESS_TOKEN"),
 	)
   events, err := bot.ParseRequest(req)
   if err != nil {
