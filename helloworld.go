@@ -10,6 +10,8 @@ import (
     "github.com/line/line-bot-sdk-go/linebot"
 )
 
+var userChoiceMap map[string]string
+
 func hello(w http.ResponseWriter, r *http.Request) {
     name := r.URL.Query().Get("name")
     if len(name) != 0 {
@@ -51,19 +53,18 @@ func callback(w http.ResponseWriter, req *http.Request) {
                       }
       }
     case linebot.EventTypeMessage:
-      fmt.Println("This is " + linebot.EventTypeMessage + " event")
       switch message := event.Message.(type) {
       case *linebot.TextMessage:
-        if strings.Contains(message.Text, "@bot") {
-          if strings.Contains(message.Text, "hompimpa") {
+        if (strings.Contains(message.Text, "@bot") && strings.Contains(message.Text, "hompimpa")) {
+          // if strings.Contains(message.Text, "hompimpa") {
             template := linebot.NewConfirmTemplate(
 			                          "Mau pilih apa?",
-			                          linebot.NewMessageTemplateAction("Putih", "Putih"),
-			                          linebot.NewMessageTemplateAction("Hitam", "Hitam"),
+			                          linebot.NewPostbackTemplateAction("Putih", "Putih", ""),
+			                          linebot.NewPostbackTemplateAction("Hitam", "Hitam", ""),
 		                            )
 		        if _, err := bot.ReplyMessage(
 			                          event.ReplyToken,
-			                          linebot.NewTemplateMessage("Confirm alt text", template),
+			                          linebot.NewTemplateMessage("Hompimpa", template),
 		                            ).Do(); err != nil {
 			                             log.Print(err)
 		                            }
@@ -74,11 +75,15 @@ func callback(w http.ResponseWriter, req *http.Request) {
                                 ).Do(); err != nil {
                                     log.Print(err)
                                 }
-          }
+          // }
         }
       }
     }
   }
+}
+
+func runHompimpaGame() {
+
 }
 
 func main() {
