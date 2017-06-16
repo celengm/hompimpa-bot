@@ -8,6 +8,7 @@ import (
     "log"
     "strings"
     "regexp"
+    "strconv"
     "github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -57,12 +58,15 @@ func callback(w http.ResponseWriter, req *http.Request) {
     case linebot.EventTypePostback:
       postbackData := event.Postback.Data
       if strings.Contains(postbackData, "numberOfPlayers"){
-        nPlayers := regexp.MustCompile("[0-9]+").FindString(event.Postback.Data)
+        nPlayers, _ := strconv.Atoi(regexp.MustCompile("[0-9]+").FindString(event.Postback.Data))
         fmt.Println(nPlayers)
         if event.Source.Type == linebot.EventSourceTypeGroup {
-          userChoiceMap[event.Source.GroupID] = make(map[string]string, 5)
+          userChoiceMap[event.Source.GroupID] = make(map[string]string, nPlayers)
+          fmt.Println(len(userChoiceMap))
+          fmt.Println(userChoiceMap)
+          fmt.Println(userChoiceMap[event.Source.GroupID])
         } else if event.Source.Type == linebot.EventSourceTypeRoom {
-          userChoiceMap[event.Source.RoomID] = make(map[string]string, 5)
+          userChoiceMap[event.Source.RoomID] = make(map[string]string, nPlayers)
         }
         template := linebot.NewConfirmTemplate(
                               "Mau pilih apa?",
