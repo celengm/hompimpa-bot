@@ -64,10 +64,12 @@ func callback(w http.ResponseWriter, req *http.Request) {
           userChoiceMap[event.Source.GroupID] = make(map[string]string, nPlayers)
           fmt.Println(len(userChoiceMap))
           fmt.Println(userChoiceMap)
+          fmt.Println(len(userChoiceMap[event.Source.GroupID]))
           fmt.Println(userChoiceMap[event.Source.GroupID])
         } else if event.Source.Type == linebot.EventSourceTypeRoom {
           userChoiceMap[event.Source.RoomID] = make(map[string]string, nPlayers)
         }
+        fmt.Println(event.Source.UserID)
         template := linebot.NewConfirmTemplate(
                               "Mau pilih apa?",
                               linebot.NewPostbackTemplateAction("Putih", "Putih", ""),
@@ -96,6 +98,10 @@ func callback(w http.ResponseWriter, req *http.Request) {
                                     log.Print(err)
                                 }
         }
+        fmt.Println(len(userChoiceMap))
+        fmt.Println(userChoiceMap)
+        fmt.Println(len(userChoiceMap[event.Source.GroupID]))
+        fmt.Println(userChoiceMap[event.Source.GroupID])
       }
     case linebot.EventTypeMessage:
       switch message := event.Message.(type) {
