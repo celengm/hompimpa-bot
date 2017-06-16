@@ -56,7 +56,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
     case linebot.EventTypePostback:
       postbackData := event.Postback.Data
       if strings.Contains(postbackData, "numberOfPlayers"){
-        nPlayers := regexp.MustCompile("[0-9]+").FindAllString(event.Postback.Data, 1)
+        nPlayers := regexp.MustCompile("[0-9]+").FindString(event.Postback.Data)
         fmt.Println(nPlayers)
         if event.Source.Type == linebot.EventSourceTypeGroup {
           userChoiceMap[event.Source.GroupID] = make(map[string]string, 5)
