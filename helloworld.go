@@ -7,6 +7,7 @@ import (
     "os"
     "log"
     "strings"
+    "regexp"
     "github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -52,25 +53,51 @@ func callback(w http.ResponseWriter, req *http.Request) {
                           log.Print(err)
                       }
       }
-    // case linebot.EventTypePostback:
-    //   if event.Source.Type == linebot.EventSourceTypeGroup {
-    //     runHompimpaGame(event.Source.GroupID, event.Source.UserId, event.Postback.Data)
-    //   } else if event.Source.Type == linebot.EventSourceTypeRoom {
-    //     runHompimpaGame(event.Source.RoomID, event.Source.UserId, event.Postback.Data)
-    //   } else if event.Source.Type == linebot.EventSourceTypeUser {
-    //     if _, err = bot.ReplyMessage(
-    //                           event.ReplyToken,
-    //                           linebot.NewTextMessage("Kamu cuma bisa main hompimpa di group atau room"),
-    //                           ).Do(); err != nil {
-    //                               log.Print(err)
-    //                           }
-    //   }
+    case linebot.EventTypePostback:
+      postbackData := event.Postback.Data
+      if strings.Contains(postbackData, "numberOfPlayers"){
+        nPlayers := regexp.MustCompile("[0-9]+").FindAllString(event.Postback.Data, 1)
+        fmt.Println(nPlayers)
+        if event.Source.Type == linebot.EventSourceTypeGroup {
+          userChoiceMap[event.Source.GroupID] = make(map[string]string, 5)
+        } else if event.Source.Type == linebot.EventSourceTypeRoom {
+          userChoiceMap[event.Source.RoomID] = make(map[string]string, 5)
+        }
+        template := linebot.NewConfirmTemplate(
+                              "Mau pilih apa?",
+                              linebot.NewPostbackTemplateAction("Putih", "Putih", ""),
+                              linebot.NewPostbackTemplateAction("Hitam", "Hitam", ""),
+                              )
+        if _, err := bot.ReplyMessage(
+                              event.ReplyToken,
+                              linebot.NewTemplateMessage("Hompimpa", template),
+                              ).Do(); err != nil {
+                                 log.Print(err)
+                              }
+      } else if (strings.Contains(postbackData, "Putih") || strings.Contains(postbackData, "Hitam")){
+        if event.Source.Type == linebot.EventSourceTypeGroup {
+          if _, ok := userChoiceMap[event.Source.GroupID][event.Source.UserID]; !ok {
+            userChoiceMap[event.Source.GroupID][event.Source.UserID] = postbackData
+          }
+        } else if event.Source.Type == linebot.EventSourceTypeRoom {
+          if _, ok := userChoiceMap[event.Source.RoomID][event.Source.UserID]; !ok {
+            userChoiceMap[event.Source.RoomID][event.Source.UserID] = postbackData
+          }
+        } else if event.Source.Type == linebot.EventSourceTypeUser {
+          if _, err = bot.ReplyMessage(
+                                event.ReplyToken,
+                                linebot.NewTextMessage("Kamu gak bisa main hompimpa sendiri"),
+                                ).Do(); err != nil {
+                                    log.Print(err)
+                                }
+        }
+      }
     case linebot.EventTypeMessage:
       switch message := event.Message.(type) {
       case *linebot.TextMessage:
         if (strings.Contains(message.Text, "@bot") && strings.Contains(message.Text, "hompimpa")) {
           template := linebot.NewButtonsTemplate(
-			                          "", "", "Mau pilih apa?",
+			                          "", "", "Berapa orang yg main?",
 			                          linebot.NewPostbackTemplateAction("3", "numberOfPlayers=3", "3"),
 			                          linebot.NewPostbackTemplateAction("4", "numberOfPlayers=4", "4"),
                                 linebot.NewPostbackTemplateAction("5", "numberOfPlayers=5", "5"),
@@ -93,10 +120,6 @@ func callback(w http.ResponseWriter, req *http.Request) {
       }
     }
   }
-}
-
-func runHompimpaGame(group_id, user_id, choice string) {
-
 }
 
 func main() {
