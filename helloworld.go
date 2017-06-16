@@ -35,6 +35,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
     return
   }
   for _, event := range events {
+    fmt.Println(event)
     fmt.Println(event.Type)
     switch event_type := event.Type; event_type {
     case linebot.EventTypeJoin:
