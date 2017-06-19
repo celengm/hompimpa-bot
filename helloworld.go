@@ -116,6 +116,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
                                 linebot.NewPostbackTemplateAction("6", "numberOfPlayers=6", "6"),
 		                            )
                                 */
+          userChoiceMap[event.Source.GroupID] = make(map[string]string)
           template := linebot.NewConfirmTemplate(
                                 "Mau pilih apa?",
                                 linebot.NewPostbackTemplateAction("Putih", "Putih", ""),
