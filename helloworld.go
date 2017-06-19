@@ -154,6 +154,7 @@ func showUserChoice (group_id string) (string) {
   for k, _ := range userChoiceMap[group_id] {
     returnText = returnText + k + ": " + userChoiceMap[group_id][k] + "\n"
   }
+  return returnText
 }
 
 
