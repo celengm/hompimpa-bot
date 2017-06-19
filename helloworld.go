@@ -149,7 +149,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
   }
 }
 
-func showUserChoice (group_id) (string) {
+func showUserChoice (group_id string) (string) {
   var returnText string = "Users' choice: \n"
   for k, _ := range userChoiceMap[group_id] {
     returnText = returnText + k + ": " + userChoiceMap[group_id][k] + "\n"
