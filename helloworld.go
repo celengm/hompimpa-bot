@@ -154,8 +154,10 @@ func getFewestChoice (group_id, reply_token string) (string) {
   var blackChoice int = 0
   for k, _ := range userChoiceMap {
     if userChoiceMap[group_id][k] == "Putih" {
+      fmt.Println("user's choice is white")
       whiteChoice++
     } else if userChoiceMap[group_id][k] == "Black" {
+      fmt.Println("user's choice is black")
       blackChoice++
     }
   }
