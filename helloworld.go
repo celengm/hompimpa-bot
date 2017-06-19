@@ -150,11 +150,16 @@ func callback(w http.ResponseWriter, req *http.Request) {
 }
 
 func showUserChoice (group_id string) (string) {
-  var returnText string = "Users' choice: \n"
+  var blackText string = "Hitam: \n"
+  var whiteText string = "Putih: \n"
   for k, _ := range userChoiceMap[group_id] {
-    returnText = returnText + getUserProfile(k) + ": " + userChoiceMap[group_id][k] + "\n"
+    if userChoiceMap[group_id][k] == "Putih" {
+      whiteText = whiteText + getUserProfile(k) + ": " + userChoiceMap[group_id][k] + "\n"
+    } else if userChoiceMap[group_id][k] == "Hitam" {
+      blackText = blackText + getUserProfile(k) + ": " + userChoiceMap[group_id][k] + "\n"
+    }
   }
-  return returnText
+  return ("Users' choice: \n" + whiteText + "\n" + blackText)
 }
 
 func getUserProfile (user_id string) (string) {
@@ -173,45 +178,33 @@ func getFewestChoice (group_id string) (string) {
   var whiteChoice int = 0
   var blackChoice int = 0
   for k, _ := range userChoiceMap[group_id] {
-    fmt.Println(userChoiceMap[group_id][k])
     if userChoiceMap[group_id][k] == "Putih" {
-      fmt.Println("user's choice is white")
       whiteChoice++
     } else if userChoiceMap[group_id][k] == "Hitam" {
-      fmt.Println("user's choice is black")
       blackChoice++
     }
   }
-  fmt.Println(whiteChoice)
-  fmt.Println(blackChoice)
   if whiteChoice < blackChoice {
-    fmt.Println("whiteChoice < blackChoice")
     if whiteChoice == 1 {
-      fmt.Println("whiteChoice = 1")
       for k, _ := range userChoiceMap[group_id] {
         if userChoiceMap[group_id][k] == "Putih" {
           return "Yang menang adalah user: " + k
         }
       }
     } else if whiteChoice != 1 {
-      fmt.Println("whiteChoice != 1")
       return "Gak ada yang menang nih, ulang lagi ya"
     }
   } else if whiteChoice > blackChoice {
-    fmt.Println("whiteChoice > blackChoice")
     if blackChoice == 1 {
-      fmt.Println("blackChoice = 1")
       for k, _ := range userChoiceMap[group_id] {
         if userChoiceMap[group_id][k] == "Hitam" {
           return "Yang menang adalah user: " + k
         }
       }
     } else if blackChoice != 1 {
-      fmt.Println("blackChoice != 1")
       return "Gak ada yang menang nih, ulang lagi ya"
     }
   } else if whiteChoice == blackChoice {
-    fmt.Println("whiteChoice = blackChoice")
     return "Gak ada yang menang nih, ulang lagi ya"
   }
   return "Error"
