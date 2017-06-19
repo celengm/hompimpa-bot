@@ -152,7 +152,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
 func getFewestChoice (group_id, reply_token string) (string) {
   var whiteChoice int = 0
   var blackChoice int = 0
-  for k, _ := range userChoiceMap {
+  for k, _ := range userChoiceMap[group_id] {
     fmt.Println(userChoiceMap[group_id][k])
     if userChoiceMap[group_id][k] == "Putih" {
       fmt.Println("user's choice is white")
