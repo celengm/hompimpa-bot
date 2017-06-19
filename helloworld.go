@@ -107,6 +107,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
       switch message := event.Message.(type) {
       case *linebot.TextMessage:
         if (strings.Contains(message.Text, "@bot") && strings.Contains(message.Text, "hompimpa")) {
+          /*
           template := linebot.NewButtonsTemplate(
 			                          "", "", "Berapa orang yg main?",
 			                          linebot.NewPostbackTemplateAction("3", "numberOfPlayers=3", "3"),
@@ -114,12 +115,26 @@ func callback(w http.ResponseWriter, req *http.Request) {
                                 linebot.NewPostbackTemplateAction("5", "numberOfPlayers=5", "5"),
                                 linebot.NewPostbackTemplateAction("6", "numberOfPlayers=6", "6"),
 		                            )
+                                */
+          template := linebot.NewConfirmTemplate(
+                                "Mau pilih apa?",
+                                linebot.NewPostbackTemplateAction("Putih", "Putih", ""),
+                                linebot.NewPostbackTemplateAction("Hitam", "Hitam", ""),
+                                )
 		      if _, err := bot.ReplyMessage(
 			                          event.ReplyToken,
 			                          linebot.NewTemplateMessage("Hompimpa", template),
 		                            ).Do(); err != nil {
 			                             log.Print(err)
 		                            }
+        } else if (strings.Contains(message.Text, "@bot") && strings.Contains(message.Text, "selesai")) {
+          //Get fewest choice
+          if _, err = bot.ReplyMessage(
+                                event.ReplyToken,
+                                linebot.NewTextMessage(getFewestChoice(event.Source.GroupID, event.ReplyToken)),
+                                ).Do(); err != nil {
+                                    log.Print(err)
+                                }
         } else {
           if _, err = bot.ReplyMessage(
                                 event.ReplyToken,
@@ -131,6 +146,42 @@ func callback(w http.ResponseWriter, req *http.Request) {
       }
     }
   }
+}
+
+func getFewestChoice (group_id, reply_token string) (string) {
+  var whiteChoice int = 0
+  var blackChoice int = 0
+  for k, _ := range userChoiceMap {
+    if userChoiceMap[group_id][k] == "Putih" {
+      whiteChoice++
+    } else if userChoiceMap[group_id][k] == "Black" {
+      blackChoice++
+    }
+  }
+  if whiteChoice < blackChoice {
+    if whiteChoice != 1 {
+      return "Gak ada yang menang nih, ulang lagi ya"
+    } else if whiteChoice == 1 {
+      for k, _ := range userChoiceMap {
+        if userChoiceMap[group_id][k] == "Putih" {
+          return "Yang menang adalah user: " + k
+        }
+      }
+    }
+  } else if whiteChoice > blackChoice {
+    if blackChoice != 1 {
+      return "Gak ada yang menang nih, ulang lagi ya"
+    } else if blackChoice == 1 {
+      for k, _ := range userChoiceMap {
+        if userChoiceMap[group_id][k] == "Hitam" {
+          return "Yang menang adalah user: " + k
+        }
+      }
+    }
+  } else if whiteChoice == blackChoice {
+    return "Gak ada yang menang nih, ulang lagi ya"
+  }
+  return "Error"
 }
 
 func main() {
