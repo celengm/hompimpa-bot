@@ -62,10 +62,6 @@ func callback(w http.ResponseWriter, req *http.Request) {
         fmt.Println(nPlayers)
         if event.Source.Type == linebot.EventSourceTypeGroup {
           userChoiceMap[event.Source.GroupID] = make(map[string]string, nPlayers)
-          fmt.Println(len(userChoiceMap))
-          fmt.Println(userChoiceMap)
-          fmt.Println(len(userChoiceMap[event.Source.GroupID]))
-          fmt.Println(userChoiceMap[event.Source.GroupID])
         } else if event.Source.Type == linebot.EventSourceTypeRoom {
           userChoiceMap[event.Source.RoomID] = make(map[string]string, nPlayers)
         }
@@ -83,12 +79,26 @@ func callback(w http.ResponseWriter, req *http.Request) {
                               }
       } else if (strings.Contains(postbackData, "Putih") || strings.Contains(postbackData, "Hitam")){
         if event.Source.Type == linebot.EventSourceTypeGroup {
-          if _, ok := userChoiceMap[event.Source.GroupID][event.Source.UserID]; !ok {
-            userChoiceMap[event.Source.GroupID][event.Source.UserID] = postbackData
+          displayName := getUserProfile(event.Source.UserID)
+          if _, ok := userChoiceMap[event.Source.GroupID][displayName]; !ok {
+            userChoiceMap[event.Source.GroupID][displayName] = postbackData
+            if _, err = bot.ReplyMessage(
+                                  event.ReplyToken,
+                                  linebot.NewTextMessage(displayName + " sudah milih"),
+                                  ).Do(); err != nil {
+                                      log.Print(err)
+                                  }
           }
         } else if event.Source.Type == linebot.EventSourceTypeRoom {
-          if _, ok := userChoiceMap[event.Source.RoomID][event.Source.UserID]; !ok {
-            userChoiceMap[event.Source.RoomID][event.Source.UserID] = postbackData
+          displayName := getUserProfile(event.Source.UserID)
+          if _, ok := userChoiceMap[event.Source.RoomID][displayName]; !ok {
+            userChoiceMap[event.Source.RoomID][displayName] = postbackData
+            if _, err = bot.ReplyMessage(
+                                  event.ReplyToken,
+                                  linebot.NewTextMessage(displayName + " sudah milih"),
+                                  ).Do(); err != nil {
+                                      log.Print(err)
+                                  }
           }
         } else if event.Source.Type == linebot.EventSourceTypeUser {
           if _, err = bot.ReplyMessage(
@@ -98,10 +108,6 @@ func callback(w http.ResponseWriter, req *http.Request) {
                                     log.Print(err)
                                 }
         }
-        fmt.Println(len(userChoiceMap))
-        fmt.Println(userChoiceMap)
-        fmt.Println(len(userChoiceMap[event.Source.GroupID]))
-        fmt.Println(userChoiceMap[event.Source.GroupID])
       }
     case linebot.EventTypeMessage:
       switch message := event.Message.(type) {
@@ -154,9 +160,9 @@ func showUserChoice (group_id string) (string) {
   var whiteText string = "Putih: \n"
   for k, _ := range userChoiceMap[group_id] {
     if userChoiceMap[group_id][k] == "Putih" {
-      whiteText = whiteText + getUserProfile(k) + "\n"
+      whiteText = whiteText + k + "\n"
     } else if userChoiceMap[group_id][k] == "Hitam" {
-      blackText = blackText + getUserProfile(k) + "\n"
+      blackText = blackText + k + "\n"
     }
   }
   return ("Users' choice: \n" + whiteText + "\n" + blackText)
