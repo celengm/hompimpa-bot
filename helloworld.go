@@ -154,9 +154,9 @@ func showUserChoice (group_id string) (string) {
   var whiteText string = "Putih: \n"
   for k, _ := range userChoiceMap[group_id] {
     if userChoiceMap[group_id][k] == "Putih" {
-      whiteText = whiteText + getUserProfile(k) + ": " + userChoiceMap[group_id][k] + "\n"
+      whiteText = whiteText + getUserProfile(k) + "\n"
     } else if userChoiceMap[group_id][k] == "Hitam" {
-      blackText = blackText + getUserProfile(k) + ": " + userChoiceMap[group_id][k] + "\n"
+      blackText = blackText + getUserProfile(k) + "\n"
     }
   }
   return ("Users' choice: \n" + whiteText + "\n" + blackText)
