@@ -132,7 +132,7 @@ func callback(w http.ResponseWriter, req *http.Request) {
           //Get fewest choice
           if _, err = bot.ReplyMessage(
                                 event.ReplyToken,
-                                linebot.NewTextMessage(getFewestChoice(event.Source.GroupID, event.ReplyToken)),
+                                linebot.NewTextMessage(showUserChoice(event.Source.GroupID)),
                                 ).Do(); err != nil {
                                     log.Print(err)
                                 }
@@ -149,7 +149,15 @@ func callback(w http.ResponseWriter, req *http.Request) {
   }
 }
 
-func getFewestChoice (group_id, reply_token string) (string) {
+func showUserChoice (group_id) (string) {
+  var returnText string = "Users' choice: \n"
+  for k, _ := range userChoiceMap[group_id] {
+    returnText = returnText + k + ": " + userChoiceMap[group_id][k] + "\n"
+  }
+}
+
+
+func getFewestChoice (group_id string) (string) {
   var whiteChoice int = 0
   var blackChoice int = 0
   for k, _ := range userChoiceMap[group_id] {
