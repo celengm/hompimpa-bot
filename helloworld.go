@@ -168,7 +168,7 @@ func getFewestChoice (group_id, reply_token string) (string) {
     if whiteChoice != 1 {
       return "Gak ada yang menang nih, ulang lagi ya"
     } else if whiteChoice == 1 {
-      for k, _ := range userChoiceMap {
+      for k, _ := range userChoiceMap[group_id] {
         if userChoiceMap[group_id][k] == "Putih" {
           return "Yang menang adalah user: " + k
         }
@@ -178,7 +178,7 @@ func getFewestChoice (group_id, reply_token string) (string) {
     if blackChoice != 1 {
       return "Gak ada yang menang nih, ulang lagi ya"
     } else if blackChoice == 1 {
-      for k, _ := range userChoiceMap {
+      for k, _ := range userChoiceMap[group_id] {
         if userChoiceMap[group_id][k] == "Hitam" {
           return "Yang menang adalah user: " + k
         }
