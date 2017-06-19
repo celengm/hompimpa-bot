@@ -165,24 +165,24 @@ func getFewestChoice (group_id, reply_token string) (string) {
   fmt.Println(whiteChoice)
   fmt.Println(blackChoice)
   if whiteChoice < blackChoice {
-    if whiteChoice != 1 {
-      return "Gak ada yang menang nih, ulang lagi ya"
-    } else if whiteChoice == 1 {
+    if whiteChoice == 1 {
       for k, _ := range userChoiceMap[group_id] {
         if userChoiceMap[group_id][k] == "Putih" {
           return "Yang menang adalah user: " + k
         }
       }
+    } else if whiteChoice != 1 {
+      return "Gak ada yang menang nih, ulang lagi ya"
     }
   } else if whiteChoice > blackChoice {
-    if blackChoice != 1 {
-      return "Gak ada yang menang nih, ulang lagi ya"
-    } else if blackChoice == 1 {
+    if blackChoice == 1 {
       for k, _ := range userChoiceMap[group_id] {
         if userChoiceMap[group_id][k] == "Hitam" {
           return "Yang menang adalah user: " + k
         }
       }
+    } else if blackChoice != 1 {
+      return "Gak ada yang menang nih, ulang lagi ya"
     }
   } else if whiteChoice == blackChoice {
     return "Gak ada yang menang nih, ulang lagi ya"
