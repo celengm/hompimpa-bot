@@ -159,6 +159,8 @@ func getFewestChoice (group_id, reply_token string) (string) {
       blackChoice++
     }
   }
+  fmt.Println(whiteChoice)
+  fmt.Println(blackChoice)
   if whiteChoice < blackChoice {
     if whiteChoice != 1 {
       return "Gak ada yang menang nih, ulang lagi ya"
