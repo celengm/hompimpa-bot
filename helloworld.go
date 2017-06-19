@@ -152,11 +152,22 @@ func callback(w http.ResponseWriter, req *http.Request) {
 func showUserChoice (group_id string) (string) {
   var returnText string = "Users' choice: \n"
   for k, _ := range userChoiceMap[group_id] {
-    returnText = returnText + k + ": " + userChoiceMap[group_id][k] + "\n"
+    returnText = returnText + getUserProfile(k) + ": " + userChoiceMap[group_id][k] + "\n"
   }
   return returnText
 }
 
+func getUserProfile (user_id string) (string) {
+  bot, err := linebot.New(
+		os.Getenv("CHANNEL_SECRET"),
+		os.Getenv("CHANNEL_ACCESS_TOKEN"),
+	)
+  res, err := bot.GetProfile(user_id).Do();
+  if err != nil {
+    fmt.Println(err)
+  }
+  return res.DisplayName
+}
 
 func getFewestChoice (group_id string) (string) {
   var whiteChoice int = 0
